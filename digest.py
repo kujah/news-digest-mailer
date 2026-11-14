@@ -165,7 +165,7 @@ def render(articles: list[Article], now: datetime) -> str:
 
 
 def send_mail(body: str, subject: str) -> None:
-    required = ["SMTP_HOST", "SMTP_USER", "SMTP_PASSWORD", "MAIL_FROM", "MAIL_TO"]
+    required = ["SMTP_USER", "SMTP_PASSWORD", "MAIL_TO"]
     missing = [key for key in required if not os.environ.get(key)]
     if missing:
         raise ValueError(f"Missing environment variables: {', '.join(missing)}")
@@ -175,15 +175,16 @@ def send_mail(body: str, subject: str) -> None:
     port = int(os.environ.get("SMTP_PORT", "465" if security == "ssl" else "587"))
     message = EmailMessage()
     message["Subject"] = subject
-    message["From"] = os.environ["MAIL_FROM"]
+    message["From"] = os.environ.get("MAIL_FROM", os.environ["SMTP_USER"])
     message["To"] = os.environ["MAIL_TO"]
     message.set_content(body)
+    host = os.environ.get("SMTP_HOST", "smtp.gmail.com")
     if security == "ssl":
-        with smtplib.SMTP_SSL(os.environ["SMTP_HOST"], port, timeout=20) as client:
+        with smtplib.SMTP_SSL(host, port, timeout=20) as client:
             client.login(os.environ["SMTP_USER"], os.environ["SMTP_PASSWORD"])
             client.send_message(message)
     else:
-        with smtplib.SMTP(os.environ["SMTP_HOST"], port, timeout=20) as client:
+        with smtplib.SMTP(host, port, timeout=20) as client:
             client.starttls()
             client.login(os.environ["SMTP_USER"], os.environ["SMTP_PASSWORD"])
             client.send_message(message)
