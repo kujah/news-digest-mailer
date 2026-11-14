@@ -43,7 +43,7 @@ def fetch(url: str) -> bytes:
 
 
 def clean_text(value: str) -> str:
-    return re.sub(r"\s+", " ", html.unescape(re.sub(r"[^>]+>", " ", value))).strip()
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", value))).strip()
 
 
 def parse_date(value: str | None) -> datetime | None:
@@ -114,7 +114,7 @@ class ParagraphExtractor(HTMLParser):
 
 def article_excerpt(data: bytes, limit: int = 300) -> str:
     parser = ParagraphExtractor()
-    declared = re.search(rb"charset\s*=\s*['"]?([A-Za-z0-9_-]+)", data[:4096], re.IGNORECASE)
+    declared = re.search(rb"charset\s*=\s*['\"]?([A-Za-z0-9_-]+)", data[:4096], re.IGNORECASE)
     encoding = declared.group(1).decode("ascii") if declared else "utf-8"
     try:
         page = data.decode(encoding, errors="replace")
@@ -139,7 +139,7 @@ def collect(config: dict, now: datetime | None = None) -> list[Article]:
             print(f"Feed skipped ({feed_url}): {error}", file=sys.stderr)
             continue
         for item in items:
-            if item.published is not None and item.published >= cutoff:
+            if item.published is not None and item.published < cutoff:
                 continue
             if keywords and not any(word in f"{item.title} {item.summary}".casefold() for word in keywords):
                 continue
@@ -157,57 +157,58 @@ def collect(config: dict, now: datetime | None = None) -> list[Article]:
 
 
 def render(articles: list[Article], now: datetime) -> str:
- header = f"News digest — { ow.astimezone(timezone(timedelta(hours=9))).strftime('%Y-%m-%d %H:%M KST')}"
- parts = [header, ""]
-    for umber, article in enumerate(articles, 1):
- parts.extend([f"{ umber}. {article.title}", article.url, article.summary or "(본문을 추출하지 못했습니다.)", ""])
+    header = f"News digest — {now.astimezone(timezone(timedelta(hours=9))).strftime('%Y-%m-%d %H:%M KST')}"
+    parts = [header, ""]
+    for number, article in enumerate(articles, 1):
+        parts.extend([f"{number}. {article.title}", article.url, article.summary or "(본문을 추출하지 못했습니다.)", ""])
     return "\n".join(parts).strip() + "\n"
 
 
 def send_mail(body: str, subject: str) -> None:
- required = ["SMTP_HOST", "SMTP_USER", "SMTP_PASSWORD", "MAIL_FROM", "MAIL_TO"]
- missing = [key for key in required if not os.environ.get(key)]
+    required = ["SMTP_HOST", "SMTP_USER", "SMTP_PASSWORD", "MAIL_FROM", "MAIL_TO"]
+    missing = [key for key in required if not os.environ.get(key)]
     if missing:
         raise ValueError(f"Missing environment variables: {', '.join(missing)}")
- security = os.environ.get("SMTP_SECURITY", "ssl").lower()
+    security = os.environ.get("SMTP_SECURITY", "ssl").lower()
     if security not in {"ssl", "starttls"}:
         raise ValueError("SMTP_SECURITY must be ssl or starttls")
- port = int(os.environ.get("SMTP_PORT", "465" if security == "ssl" else "587"))
- message = EmailMessage()
- message["Subject"] = subject
- message["From"] = os.environ["MAIL_FROM"]
- message["To"] = os.environ["MAIL_TO"]
- message.set_content(body)
+    port = int(os.environ.get("SMTP_PORT", "465" if security == "ssl" else "587"))
+    message = EmailMessage()
+    message["Subject"] = subject
+    message["From"] = os.environ["MAIL_FROM"]
+    message["To"] = os.environ["MAIL_TO"]
+    message.set_content(body)
     if security == "ssl":
         with smtplib.SMTP_SSL(os.environ["SMTP_HOST"], port, timeout=20) as client:
- client.login(os.environ["SMTP_USER"], os.environ["SMTP_PASSWORD"])
- client.send_message(message)
+            client.login(os.environ["SMTP_USER"], os.environ["SMTP_PASSWORD"])
+            client.send_message(message)
     else:
         with smtplib.SMTP(os.environ["SMTP_HOST"], port, timeout=20) as client:
- client.starttls()
- client.login(os.environ["SMTP_USER"], os.environ["SMTP_PASSWORD"])
- client.send_message(message)
+            client.starttls()
+            client.login(os.environ["SMTP_USER"], os.environ["SMTP_PASSWORD"])
+            client.send_message(message)
 
 
 def main() -> int:
- parser = argparse.ArgumentParser(description=__doc__)
- parser.add_argument("--config", type=Path, default=Path("sources.json"))
- parser.add_argument("--dry-run", action="store_true", help="Print the email without sending it")
- args = parser.parse_args()
- config = json.loads(args.config.read_text(encoding="utf-8"))
- articles = collect(config)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--config", type=Path, default=Path("sources.json"))
+    parser.add_argument("--dry-run", action="store_true", help="Print the email without sending it")
+    args = parser.parse_args()
+    config = json.loads(args.config.read_text(encoding="utf-8"))
+    articles = collect(config)
     if not articles:
         print("No matching articles; no email sent.")
         return 0
- ow = datetime.now(timezone.utc)
- body = render(articles, now)
+    now = datetime.now(timezone.utc)
+    body = render(articles, now)
     if args.dry_run:
         print(body)
     else:
-        send_mail(body, f"News digest: {len(articles)} articles ({ ow.date()})")
+        send_mail(body, f"News digest: {len(articles)} articles ({now.date()})")
         print(f"Sent {len(articles)} articles.")
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
