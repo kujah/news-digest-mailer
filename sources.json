@@ -1,0 +1,17 @@
+{
+  "feeds": [
+    "https://www.pv-magazine.com/feed/",
+    "https://www.solarpowerworldonline.com/feed/",
+    "https://www.pv-tech.org/feed/",
+    "https://steelnews.biz/feed/",
+    "https://steelindustry.news/feed/"
+  ],
+  "keywords": [
+    "solar", "photovoltaic", "PV", "tracker", "Nextpower", "GameChange", "Arctech",
+    "Ideematec", "floating", "agrovoltaic", "carport", "mounting structure",
+    "steel", "furnace", "zinc-magnesium", "galvanized", "ternary",
+    "태양광", "주차장태양광", "제철소", "철강", "전기로", "고로", "삼원계", "아연도금강판"
+  ],
+  "max_items": 20,
+  "since_hours": 26
+}
