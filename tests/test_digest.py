@@ -44,7 +44,7 @@ class DigestTests(unittest.TestCase):
 
     def test_mail_requires_credentials_before_connection(self):
         with patch.dict(os.environ, {}, clear=True):
-            with self.assertRaisesRegex(ValueError, "SMTP_HOST"):
+            with self.assertRaisesRegex(ValueError, "SMTP_USER"):
                 digest.send_mail("body", "subject")
 
     def test_extracts_korean_legacy_encoding(self):
