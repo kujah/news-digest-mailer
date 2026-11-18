@@ -1,17 +1,1478 @@
 {
-  "feeds": [
-    "https://www.pv-magazine.com/feed/",
-    "https://www.solarpowerworldonline.com/feed/",
-    "https://www.pv-tech.org/feed/",
-    "https://steelnews.biz/feed/",
-    "https://steelindustry.news/feed/"
+  "version": 2,
+  "since_hours": 26,
+  "max_items": 500,
+  "excerpt_chars": 500,
+  "include_undated": false,
+  "send_empty_digest": true,
+  "project_thresholds": {
+    "solar_min_mw": 50,
+    "bess_min_mwh": 100,
+    "bess_min_mw": 50
+  },
+  "exclude_title_terms": [
+    "특징주",
+    "오늘의 운세",
+    "부고",
+    "인사발령",
+    "주식시황",
+    "stock picks"
   ],
-  "keywords": [
-    "solar", "photovoltaic", "PV", "tracker", "Nextpower", "GameChange", "Arctech",
-    "Ideematec", "floating", "agrovoltaic", "carport", "mounting structure",
-    "steel", "furnace", "zinc-magnesium", "galvanized", "ternary",
-    "태양광", "주차장태양광", "제철소", "철강", "전기로", "고로", "삼원계", "아연도금강판"
+  "categories": [
+    {
+      "id": "kr_solar",
+      "label": "국내 경제매체 · 태양광 사업·시장",
+      "family": "business",
+      "topic": "solar",
+      "allow_unknown_project_size": false
+    },
+    {
+      "id": "kr_bess",
+      "label": "국내 경제매체 · ESS/BESS",
+      "family": "business",
+      "topic": "bess",
+      "allow_unknown_project_size": false
+    },
+    {
+      "id": "kr_steel",
+      "label": "국내 경제매체 · 철강·통상",
+      "family": "business",
+      "topic": "steel"
+    },
+    {
+      "id": "solar_specialists",
+      "label": "해외 전문매체 · 태양광 구조물·산업 전망",
+      "family": "solar_specialist",
+      "topic": "solar"
+    },
+    {
+      "id": "steel_specialists",
+      "label": "해외 전문매체 · 철강·통상",
+      "family": "business",
+      "topic": "steel"
+    },
+    {
+      "id": "kr_architecture",
+      "label": "국내 · 건축·외장",
+      "family": "construction"
+    },
+    {
+      "id": "global_architecture",
+      "label": "해외 · 건축·외장",
+      "family": "construction"
+    },
+    {
+      "id": "global_bess",
+      "label": "해외 전문매체 · BESS 시장·정책",
+      "family": "business",
+      "topic": "bess",
+      "allow_unknown_project_size": false
+    }
   ],
-  "max_items": 20,
-  "since_hours": 26
+  "term_groups": {
+    "solar": [
+      "태양광",
+      "태양광발전",
+      "태양광 모듈",
+      "photovoltaic",
+      "solar",
+      "PV"
+    ],
+    "bess": [
+      "ESS",
+      "BESS",
+      "에너지저장장치",
+      "에너지 저장 시스템",
+      "배터리 저장",
+      "전력저장",
+      "energy storage",
+      "battery storage",
+      "battery energy storage"
+    ],
+    "steel": [
+      "철강",
+      "제철소",
+      "제강",
+      "강판",
+      "열연",
+      "냉연",
+      "steel",
+      "steelmaking",
+      "steelworks",
+      "blast furnace",
+      "전기로",
+      "고로"
+    ],
+    "market_policy": [
+      "시장 전망",
+      "시장 동향",
+      "발전 전망",
+      "설치 전망",
+      "산업 전망",
+      "수요 전망",
+      "시장 성장",
+      "시장 규모",
+      "보급",
+      "전력계획",
+      "수요",
+      "공급과잉",
+      "정책",
+      "규제",
+      "법안",
+      "보조금",
+      "지원금",
+      "세액공제",
+      "인센티브",
+      "인허가",
+      "입찰",
+      "공급망",
+      "전력시장",
+      "RE100",
+      "RPS",
+      "REC",
+      "PPA",
+      "outlook",
+      "forecast",
+      "projection",
+      "market growth",
+      "market trends",
+      "market size",
+      "demand",
+      "supply chain",
+      "oversupply",
+      "policy",
+      "regulation",
+      "legislation",
+      "subsidy",
+      "incentive",
+      "tax credit",
+      "auction",
+      "tender",
+      "renewable targets",
+      "energy transition",
+      "capacity additions",
+      "설치량",
+      "설비 용량 전망",
+      "installed capacity",
+      "installation forecast"
+    ],
+    "company_events": [
+      "수주",
+      "계약",
+      "실적",
+      "매출",
+      "영업이익",
+      "증설",
+      "생산",
+      "공장",
+      "투자",
+      "인수",
+      "합병",
+      "합작",
+      "제휴",
+      "협력",
+      "공급",
+      "출하",
+      "진출",
+      "구조조정",
+      "전략",
+      "사업재편",
+      "신제품",
+      "신사업",
+      "인증",
+      "earnings",
+      "revenue",
+      "profit",
+      "factory",
+      "manufacturing",
+      "investment",
+      "acquisition",
+      "merger",
+      "partnership",
+      "joint venture",
+      "contract",
+      "supply",
+      "shipment",
+      "expansion",
+      "restructuring",
+      "strategy",
+      "launch",
+      "certification",
+      "agreement",
+      "order",
+      "production",
+      "capacity"
+    ],
+    "project_events": [
+      "신규 프로젝트",
+      "프로젝트",
+      "발전소",
+      "발전단지",
+      "착공",
+      "기공",
+      "준공",
+      "건설",
+      "개발",
+      "수주",
+      "계약",
+      "구축",
+      "project",
+      "plant",
+      "farm",
+      "construction",
+      "groundbreaking",
+      "commission",
+      "development",
+      "deployment",
+      "contract",
+      "award",
+      "installation"
+    ],
+    "solar_sectors": [
+      "수상태양광",
+      "수상 태양광",
+      "영농형태양광",
+      "영농형 태양광",
+      "농업태양광",
+      "농업 태양광",
+      "주차장태양광",
+      "carport",
+      "floating solar",
+      "floating PV",
+      "FPV",
+      "agrivoltaic",
+      "agrovoltaic",
+      "agri-PV",
+      "agrisolar",
+      "distributed solar",
+      "utility-scale solar",
+      "지붕형 태양광",
+      "분산형 태양광",
+      "지역별 전망",
+      "국가별 전망"
+    ],
+    "trade": [
+      "수출",
+      "수입",
+      "통상",
+      "관세",
+      "반덤핑",
+      "덤핑",
+      "상계관세",
+      "세이프가드",
+      "쿼터",
+      "무역",
+      "CBAM",
+      "TRQ",
+      "FTA",
+      "232조",
+      "수입규제",
+      "무역장벽",
+      "원산지",
+      "trade",
+      "export",
+      "import",
+      "tariff",
+      "antidumping",
+      "anti-dumping",
+      "countervailing",
+      "safeguard",
+      "quota",
+      "section 232",
+      "trade remedy",
+      "trade defense",
+      "trade defence"
+    ],
+    "construction": [
+      "건축사사무소",
+      "건축사 사무소",
+      "설계사무소",
+      "건축설계사무소",
+      "프로젝트 착공",
+      "착공",
+      "기공식",
+      "종합건설사 수주",
+      "건설사 수주",
+      "수주",
+      "비정형 판넬",
+      "비정형 패널",
+      "비정형 외장",
+      "스틸커튼월",
+      "스틸 커튼월",
+      "커튼월공사",
+      "커튼월 공사",
+      "지붕공사",
+      "지붕 공사",
+      "architectural firm",
+      "architecture firm",
+      "architectural practice",
+      "architecture practice",
+      "architecture studio",
+      "design firm",
+      "design office",
+      "architects office",
+      "architect's office",
+      "construction start",
+      "starts construction",
+      "construction begins",
+      "commences construction",
+      "groundbreaking",
+      "ground-breaking",
+      "breaks ground",
+      "contract awarded",
+      "awarded a contract",
+      "contract award",
+      "wins contract",
+      "general contractor",
+      "freeform panel",
+      "free-form panel",
+      "freeform cladding",
+      "curved panel",
+      "double-curved panel",
+      "non-planar panel",
+      "steel curtain wall",
+      "steel curtainwall",
+      "curtain wall",
+      "curtainwall",
+      "facade construction",
+      "façade construction",
+      "facade installation",
+      "roof construction",
+      "roofing contract",
+      "roofing works",
+      "roof installation"
+    ]
+  },
+  "entities": [
+    {
+      "name": "Nextpower",
+      "family": "tracker",
+      "aliases": [
+        "Nextpower",
+        "Nextracker",
+        "넥스트파워",
+        "넥스트래커"
+      ]
+    },
+    {
+      "name": "GameChange Energy",
+      "family": "tracker",
+      "aliases": [
+        "GameChange Energy",
+        "GameChange Solar",
+        "Gamechange",
+        "Game Change Energy",
+        "게임체인지"
+      ]
+    },
+    {
+      "name": "Ideematec",
+      "family": "tracker",
+      "aliases": [
+        "Ideematec",
+        "이데마텍",
+        "이데메텍"
+      ]
+    },
+    {
+      "name": "PV Hardware",
+      "family": "tracker",
+      "aliases": [
+        "PV Hardware",
+        "PVH",
+        "피브이하드웨어"
+      ]
+    },
+    {
+      "name": "Arctech",
+      "family": "tracker",
+      "aliases": [
+        "Arctech",
+        "아크테크"
+      ]
+    },
+    {
+      "name": "Array Technologies",
+      "family": "tracker",
+      "aliases": [
+        "Array Technologies",
+        "Array Tech",
+        "어레이테크놀로지스"
+      ]
+    },
+    {
+      "name": "Axial",
+      "family": "tracker",
+      "aliases": [
+        "Axial",
+        "Axial Structural Solutions",
+        "Axial Solar",
+        "악시알"
+      ]
+    },
+    {
+      "name": "FTC Solar",
+      "family": "tracker",
+      "aliases": [
+        "FTC Solar",
+        "FTC솔라"
+      ]
+    },
+    {
+      "name": "Gonvarri Solar Steel",
+      "family": "tracker",
+      "aliases": [
+        "Gonvarri Solar Steel",
+        "Gonvarri",
+        "곤바리"
+      ]
+    },
+    {
+      "name": "Powerway",
+      "family": "tracker",
+      "aliases": [
+        "Powerway",
+        "파워웨이"
+      ]
+    },
+    {
+      "name": "MetaloGalva",
+      "family": "tracker",
+      "aliases": [
+        "MetaloGalva",
+        "Metalogalva",
+        "메탈로갈바"
+      ]
+    },
+    {
+      "name": "Vergo Enerji",
+      "family": "tracker",
+      "aliases": [
+        "Vergo Enerji",
+        "Vergo Energy",
+        "베르고에너지"
+      ]
+    },
+    {
+      "name": "한화큐셀",
+      "family": "solar",
+      "aliases": [
+        "한화큐셀",
+        "Qcells",
+        "Q Cells",
+        "Hanwha Qcells",
+        "한화솔루션"
+      ]
+    },
+    {
+      "name": "HD현대에너지솔루션",
+      "family": "solar",
+      "aliases": [
+        "HD현대에너지솔루션",
+        "현대에너지솔루션",
+        "HD Hyundai Energy Solutions"
+      ]
+    },
+    {
+      "name": "OCI",
+      "family": "solar",
+      "aliases": [
+        "OCI",
+        "OCI홀딩스",
+        "OCI Holdings"
+      ]
+    },
+    {
+      "name": "LONGi",
+      "family": "solar",
+      "aliases": [
+        "LONGi",
+        "론지"
+      ]
+    },
+    {
+      "name": "JinkoSolar",
+      "family": "solar",
+      "aliases": [
+        "JinkoSolar",
+        "Jinko Solar",
+        "진코솔라"
+      ]
+    },
+    {
+      "name": "JA Solar",
+      "family": "solar",
+      "aliases": [
+        "JA Solar",
+        "JA솔라"
+      ]
+    },
+    {
+      "name": "Trina Solar",
+      "family": "solar",
+      "aliases": [
+        "Trina Solar",
+        "트리나솔라"
+      ]
+    },
+    {
+      "name": "Canadian Solar",
+      "family": "solar",
+      "aliases": [
+        "Canadian Solar",
+        "캐나디안솔라"
+      ]
+    },
+    {
+      "name": "First Solar",
+      "family": "solar",
+      "aliases": [
+        "First Solar",
+        "퍼스트솔라"
+      ]
+    },
+    {
+      "name": "Risen Energy",
+      "family": "solar",
+      "aliases": [
+        "Risen Energy",
+        "라이젠"
+      ]
+    },
+    {
+      "name": "Tongwei",
+      "family": "solar",
+      "aliases": [
+        "Tongwei",
+        "통웨이"
+      ]
+    },
+    {
+      "name": "LG에너지솔루션",
+      "family": "bess",
+      "aliases": [
+        "LG에너지솔루션",
+        "LG Energy Solution"
+      ]
+    },
+    {
+      "name": "삼성SDI",
+      "family": "bess",
+      "aliases": [
+        "삼성SDI",
+        "삼성 SDI",
+        "Samsung SDI"
+      ]
+    },
+    {
+      "name": "CATL",
+      "family": "bess",
+      "aliases": [
+        "CATL",
+        "닝더스다이"
+      ]
+    },
+    {
+      "name": "BYD",
+      "family": "bess",
+      "aliases": [
+        "BYD",
+        "비야디"
+      ]
+    },
+    {
+      "name": "Tesla",
+      "family": "bess",
+      "aliases": [
+        "Tesla",
+        "테슬라"
+      ]
+    },
+    {
+      "name": "Fluence",
+      "family": "bess",
+      "aliases": [
+        "Fluence",
+        "플루언스"
+      ]
+    },
+    {
+      "name": "Sungrow",
+      "family": "bess",
+      "aliases": [
+        "Sungrow",
+        "선그로우"
+      ]
+    },
+    {
+      "name": "Powin",
+      "family": "bess",
+      "aliases": [
+        "Powin",
+        "포윈"
+      ]
+    },
+    {
+      "name": "Wärtsilä",
+      "family": "bess",
+      "aliases": [
+        "Wärtsilä",
+        "Wartsila",
+        "바르질라"
+      ]
+    },
+    {
+      "name": "포스코",
+      "family": "steel",
+      "aliases": [
+        "포스코",
+        "POSCO",
+        "포스코홀딩스"
+      ]
+    },
+    {
+      "name": "현대제철",
+      "family": "steel",
+      "aliases": [
+        "현대제철",
+        "Hyundai Steel"
+      ]
+    },
+    {
+      "name": "동국제강",
+      "family": "steel",
+      "aliases": [
+        "동국제강",
+        "Dongkuk Steel",
+        "동국씨엠"
+      ]
+    },
+    {
+      "name": "세아",
+      "family": "steel",
+      "aliases": [
+        "세아",
+        "SeAH",
+        "세아제강",
+        "세아베스틸"
+      ]
+    },
+    {
+      "name": "ArcelorMittal",
+      "family": "steel",
+      "aliases": [
+        "ArcelorMittal",
+        "아르셀로미탈"
+      ]
+    },
+    {
+      "name": "Nippon Steel",
+      "family": "steel",
+      "aliases": [
+        "Nippon Steel",
+        "일본제철",
+        "신일철"
+      ]
+    },
+    {
+      "name": "JFE",
+      "family": "steel",
+      "aliases": [
+        "JFE",
+        "JFE Steel"
+      ]
+    },
+    {
+      "name": "Tata Steel",
+      "family": "steel",
+      "aliases": [
+        "Tata Steel",
+        "타타스틸"
+      ]
+    },
+    {
+      "name": "thyssenkrupp",
+      "family": "steel",
+      "aliases": [
+        "thyssenkrupp",
+        "티센크루프"
+      ]
+    },
+    {
+      "name": "SSAB",
+      "family": "steel",
+      "aliases": [
+        "SSAB",
+        "스웨덴철강"
+      ]
+    },
+    {
+      "name": "Nucor",
+      "family": "steel",
+      "aliases": [
+        "Nucor",
+        "뉴코"
+      ]
+    },
+    {
+      "name": "U.S. Steel",
+      "family": "steel",
+      "aliases": [
+        "U.S. Steel",
+        "US Steel",
+        "US스틸"
+      ]
+    },
+    {
+      "name": "Baowu",
+      "family": "steel",
+      "aliases": [
+        "Baowu",
+        "바오우",
+        "보무"
+      ]
+    }
+  ],
+  "markets": [
+    {
+      "name": "한국",
+      "aliases": [
+        "한국",
+        "국내",
+        "South Korea",
+        "Korea"
+      ]
+    },
+    {
+      "name": "미국",
+      "aliases": [
+        "미국",
+        "United States",
+        "U.S.",
+        "US",
+        "USA"
+      ]
+    },
+    {
+      "name": "중국",
+      "aliases": [
+        "중국",
+        "China",
+        "Chinese"
+      ]
+    },
+    {
+      "name": "인도",
+      "aliases": [
+        "인도",
+        "India",
+        "Indian"
+      ]
+    },
+    {
+      "name": "일본",
+      "aliases": [
+        "일본",
+        "Japan",
+        "Japanese"
+      ]
+    },
+    {
+      "name": "호주",
+      "aliases": [
+        "호주",
+        "Australia",
+        "Australian"
+      ]
+    },
+    {
+      "name": "브라질",
+      "aliases": [
+        "브라질",
+        "Brazil"
+      ]
+    },
+    {
+      "name": "독일",
+      "aliases": [
+        "독일",
+        "Germany",
+        "German"
+      ]
+    },
+    {
+      "name": "영국",
+      "aliases": [
+        "영국",
+        "United Kingdom",
+        "UK",
+        "Britain"
+      ]
+    },
+    {
+      "name": "프랑스",
+      "aliases": [
+        "프랑스",
+        "France",
+        "French"
+      ]
+    },
+    {
+      "name": "스페인",
+      "aliases": [
+        "스페인",
+        "Spain",
+        "Spanish"
+      ]
+    },
+    {
+      "name": "포르투갈",
+      "aliases": [
+        "포르투갈",
+        "Portugal"
+      ]
+    },
+    {
+      "name": "이탈리아",
+      "aliases": [
+        "이탈리아",
+        "Italy",
+        "Italian"
+      ]
+    },
+    {
+      "name": "칠레",
+      "aliases": [
+        "칠레",
+        "Chile"
+      ]
+    },
+    {
+      "name": "멕시코",
+      "aliases": [
+        "멕시코",
+        "Mexico"
+      ]
+    },
+    {
+      "name": "남아프리카공화국",
+      "aliases": [
+        "남아공",
+        "South Africa"
+      ]
+    },
+    {
+      "name": "베트남",
+      "aliases": [
+        "베트남",
+        "Vietnam"
+      ]
+    },
+    {
+      "name": "필리핀",
+      "aliases": [
+        "필리핀",
+        "Philippines"
+      ]
+    },
+    {
+      "name": "사우디아라비아",
+      "aliases": [
+        "사우디",
+        "Saudi Arabia"
+      ]
+    },
+    {
+      "name": "아랍에미리트",
+      "aliases": [
+        "아랍에미리트",
+        "UAE"
+      ]
+    },
+    {
+      "name": "튀르키예",
+      "aliases": [
+        "튀르키예",
+        "터키",
+        "Turkey",
+        "Türkiye"
+      ]
+    },
+    {
+      "name": "유럽연합",
+      "aliases": [
+        "유럽연합",
+        "European Union",
+        "EU"
+      ]
+    },
+    {
+      "name": "유럽",
+      "aliases": [
+        "유럽",
+        "Europe",
+        "European"
+      ]
+    },
+    {
+      "name": "동남아시아",
+      "aliases": [
+        "동남아",
+        "Southeast Asia"
+      ]
+    },
+    {
+      "name": "중동",
+      "aliases": [
+        "중동",
+        "Middle East"
+      ]
+    },
+    {
+      "name": "아프리카",
+      "aliases": [
+        "아프리카",
+        "Africa"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "hankyung",
+      "name": "한국경제",
+      "homepage": "https://www.hankyung.com",
+      "enabled": true,
+      "categories": [
+        "kr_solar",
+        "kr_bess",
+        "kr_steel"
+      ],
+      "allowed_domains": [
+        "www.hankyung.com",
+        "hankyung.com"
+      ],
+      "feeds": [
+        "https://www.hankyung.com/feed/economy",
+        "https://www.hankyung.com/feed/international",
+        "https://www.hankyung.com/feed/all-news"
+      ],
+      "listings": [],
+      "timezone": "Asia/Seoul",
+      "max_candidates": 1000,
+      "max_article_fetches": 150,
+      "scan_article_body": false,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "mk",
+      "name": "매일경제",
+      "homepage": "https://www.mk.co.kr",
+      "enabled": true,
+      "categories": [
+        "kr_solar",
+        "kr_bess",
+        "kr_steel"
+      ],
+      "allowed_domains": [
+        "www.mk.co.kr",
+        "mk.co.kr"
+      ],
+      "feeds": [
+        "https://www.mk.co.kr/rss/30200030/",
+        "https://www.mk.co.kr/rss/30100041/",
+        "https://www.mk.co.kr/rss/30300018/"
+      ],
+      "listings": [],
+      "timezone": "Asia/Seoul",
+      "max_candidates": 1000,
+      "max_article_fetches": 150,
+      "scan_article_body": false,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "sedaily",
+      "name": "서울경제",
+      "homepage": "https://www.sedaily.com",
+      "enabled": true,
+      "categories": [
+        "kr_solar",
+        "kr_bess",
+        "kr_steel"
+      ],
+      "allowed_domains": [
+        "www.sedaily.com",
+        "sedaily.com"
+      ],
+      "feeds": [
+        "https://www.sedaily.com/rss/business",
+        "https://www.sedaily.com/rss/economy",
+        "https://www.sedaily.com/rss/international"
+      ],
+      "listings": [],
+      "timezone": "Asia/Seoul",
+      "max_candidates": 1000,
+      "max_article_fetches": 150,
+      "scan_article_body": false,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "herald",
+      "name": "헤럴드경제",
+      "homepage": "https://biz.heraldcorp.com",
+      "enabled": true,
+      "categories": [
+        "kr_solar",
+        "kr_bess",
+        "kr_steel"
+      ],
+      "allowed_domains": [
+        "biz.heraldcorp.com",
+        "www.biz.heraldcorp.com"
+      ],
+      "feeds": [
+        "https://biz.heraldcorp.com/rss/google/newsAll"
+      ],
+      "listings": [],
+      "timezone": "Asia/Seoul",
+      "max_candidates": 1000,
+      "max_article_fetches": 150,
+      "scan_article_body": false,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "mt",
+      "name": "머니투데이",
+      "homepage": "https://www.mt.co.kr",
+      "enabled": true,
+      "categories": [
+        "kr_solar",
+        "kr_bess",
+        "kr_steel"
+      ],
+      "allowed_domains": [
+        "www.mt.co.kr",
+        "mt.co.kr"
+      ],
+      "feeds": [],
+      "listings": [
+        "https://www.mt.co.kr/industry",
+        "https://www.mt.co.kr/world",
+        "https://www.mt.co.kr/policy"
+      ],
+      "article_url_pattern": "/(?:industry|world|policy|economy|estate|finance)/20\\d{2}/\\d{2}/\\d{2}/\\d+",
+      "timezone": "Asia/Seoul",
+      "max_candidates": 1000,
+      "max_article_fetches": 150,
+      "scan_article_body": false,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "pv_magazine",
+      "name": "pv magazine",
+      "homepage": "https://www.pv-magazine.com",
+      "enabled": true,
+      "categories": [
+        "solar_specialists",
+        "global_bess"
+      ],
+      "allowed_domains": [
+        "www.pv-magazine.com",
+        "pv-magazine.com"
+      ],
+      "feeds": [
+        "https://www.pv-magazine.com/feed/"
+      ],
+      "listings": [],
+      "timezone": "UTC",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": false,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "solar_power_world",
+      "name": "Solar Power World",
+      "homepage": "https://www.solarpowerworldonline.com",
+      "enabled": true,
+      "categories": [
+        "solar_specialists",
+        "global_bess"
+      ],
+      "allowed_domains": [
+        "www.solarpowerworldonline.com",
+        "solarpowerworldonline.com"
+      ],
+      "feeds": [
+        "https://www.solarpowerworldonline.com/feed/"
+      ],
+      "listings": [],
+      "timezone": "UTC",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": false,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "pv_tech",
+      "name": "PV Tech",
+      "homepage": "https://www.pv-tech.org",
+      "enabled": true,
+      "categories": [
+        "solar_specialists",
+        "global_bess"
+      ],
+      "allowed_domains": [
+        "www.pv-tech.org",
+        "pv-tech.org"
+      ],
+      "feeds": [
+        "https://www.pv-tech.org/feed/"
+      ],
+      "listings": [],
+      "timezone": "UTC",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": false,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "steelnews",
+      "name": "Steel News",
+      "homepage": "https://steelnews.biz",
+      "enabled": true,
+      "categories": [
+        "steel_specialists"
+      ],
+      "allowed_domains": [
+        "steelnews.biz",
+        "www.steelnews.biz"
+      ],
+      "feeds": [
+        "https://steelnews.biz/feed/"
+      ],
+      "listings": [],
+      "timezone": "UTC",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": false,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "steelindustry",
+      "name": "Steel Industry News",
+      "homepage": "https://steelindustry.news",
+      "enabled": true,
+      "categories": [
+        "steel_specialists"
+      ],
+      "allowed_domains": [
+        "steelindustry.news",
+        "www.steelindustry.news"
+      ],
+      "feeds": [
+        "https://steelindustry.news/feed/"
+      ],
+      "listings": [],
+      "timezone": "UTC",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": false,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "exterior",
+      "name": "월간익스테리어",
+      "homepage": "https://exteriormagazine.co.kr",
+      "enabled": false,
+      "categories": [
+        "kr_architecture"
+      ],
+      "allowed_domains": [
+        "exteriormagazine.co.kr",
+        "www.exteriormagazine.co.kr"
+      ],
+      "feeds": [],
+      "listings": [
+        "https://exteriormagazine.co.kr/"
+      ],
+      "article_url_pattern": "/(?:news|article|board|bbs)/",
+      "timezone": "Asia/Seoul",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": true,
+      "verified_at": "2026-11-18",
+      "availability_note": "사용자가 지정한 도메인의 robots.txt 연결 실패. 공식 기사 경로 확인 후 활성화 필요."
+    },
+    {
+      "id": "windoor",
+      "name": "월간 창호기술 WINDOOR",
+      "homepage": "https://www.windoor.co.kr",
+      "enabled": true,
+      "categories": [
+        "kr_architecture"
+      ],
+      "allowed_domains": [
+        "www.windoor.co.kr",
+        "windoor.co.kr"
+      ],
+      "feeds": [
+        "https://www.windoor.co.kr/rss/allArticle.xml"
+      ],
+      "listings": [],
+      "timezone": "Asia/Seoul",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": true,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "windowndoor",
+      "name": "월간 창과문",
+      "homepage": "https://www.windowndoor.co.kr",
+      "enabled": false,
+      "categories": [
+        "kr_architecture"
+      ],
+      "allowed_domains": [
+        "www.windowndoor.co.kr",
+        "windowndoor.co.kr"
+      ],
+      "feeds": [],
+      "listings": [
+        "https://www.windowndoor.co.kr/"
+      ],
+      "article_url_pattern": "/(?:news|article|board|bbs)/",
+      "timezone": "Asia/Seoul",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": true,
+      "verified_at": "2026-11-18",
+      "availability_note": "사용자가 지정한 도메인의 robots.txt 연결 실패. 공식 기사 경로 확인 후 활성화 필요."
+    },
+    {
+      "id": "archiworld",
+      "name": "건축세계 Archiworld",
+      "homepage": "https://www.archiworld1995.com",
+      "enabled": true,
+      "categories": [
+        "kr_architecture"
+      ],
+      "allowed_domains": [
+        "www.archiworld1995.com",
+        "archiworld1995.com"
+      ],
+      "feeds": [],
+      "listings": [
+        "https://www.archiworld1995.com/customer/notice.php"
+      ],
+      "article_url_pattern": "/customer/notice\\.php\\?.*(?:ptype=view|idx=)",
+      "timezone": "Asia/Seoul",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": false,
+      "verified_at": "2026-11-18",
+      "availability_note": "공개 공지·소식만 조회. 잡지 판매 페이지·유료 원문은 수집하지 않음."
+    },
+    {
+      "id": "c3korea",
+      "name": "C3코리아",
+      "homepage": "https://www.c3korea.net",
+      "enabled": true,
+      "categories": [
+        "kr_architecture"
+      ],
+      "allowed_domains": [
+        "www.c3korea.net",
+        "c3korea.net"
+      ],
+      "feeds": [
+        "https://www.c3korea.net/feed/"
+      ],
+      "listings": [],
+      "timezone": "Asia/Seoul",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": true,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "fti",
+      "name": "Facade Tectonics Institute",
+      "homepage": "https://www.facadetectonics.org",
+      "enabled": true,
+      "categories": [
+        "global_architecture"
+      ],
+      "allowed_domains": [
+        "www.facadetectonics.org",
+        "facadetectonics.org"
+      ],
+      "feeds": [],
+      "listings": [
+        "https://www.facadetectonics.org/news/collection/news",
+        "https://www.facadetectonics.org/articles/collection/articles"
+      ],
+      "article_url_pattern": "/(?:news|articles)/(?!collection/)[a-z0-9-]+",
+      "timezone": "UTC",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": true,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "facade_today",
+      "name": "Facade Today",
+      "homepage": "https://facadetoday.com",
+      "enabled": true,
+      "categories": [
+        "global_architecture"
+      ],
+      "allowed_domains": [
+        "facadetoday.com",
+        "www.facadetoday.com"
+      ],
+      "feeds": [
+        "https://facadetoday.com/feed/"
+      ],
+      "listings": [],
+      "timezone": "UTC",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": true,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "facade_world",
+      "name": "Facade World",
+      "homepage": "https://facadeworld.com",
+      "enabled": true,
+      "categories": [
+        "global_architecture"
+      ],
+      "allowed_domains": [
+        "facadeworld.com",
+        "www.facadeworld.com"
+      ],
+      "feeds": [
+        "https://facadeworld.com/feed/"
+      ],
+      "listings": [],
+      "timezone": "UTC",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": true,
+      "verified_at": "2026-11-18"
+    },
+    {
+      "id": "archdaily",
+      "name": "ArchDaily · Materials/Facades 관련",
+      "homepage": "https://www.archdaily.com",
+      "enabled": true,
+      "categories": [
+        "global_architecture"
+      ],
+      "allowed_domains": [
+        "www.archdaily.com",
+        "archdaily.com"
+      ],
+      "feeds": [
+        "https://feeds.feedburner.com/ArchDaily"
+      ],
+      "listings": [],
+      "timezone": "UTC",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": true,
+      "verified_at": "2026-11-18",
+      "feed_domains": [
+        "www.archdaily.com",
+        "feeds.feedburner.com"
+      ],
+      "source_gate_terms": [
+        "facade",
+        "façade",
+        "facades",
+        "curtain wall",
+        "cladding",
+        "glazing",
+        "roof",
+        "materials"
+      ],
+      "availability_note": "공식 RSS 중 Materials/Facades·외장·지붕 맥락과 건축 키워드를 함께 만족하는 기사만 선별."
+    },
+    {
+      "id": "igs",
+      "name": "IGS Magazine",
+      "homepage": "https://igsmag.com",
+      "enabled": true,
+      "categories": [
+        "global_architecture"
+      ],
+      "allowed_domains": [
+        "igsmag.com",
+        "www.igsmag.com"
+      ],
+      "feeds": [
+        "https://igsmag.com/feed/"
+      ],
+      "listings": [
+        "https://igsmag.com/"
+      ],
+      "article_url_pattern": "/(?:features|press-releases|projects|architecture|facades|news)/[^?#]+",
+      "timezone": "UTC",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": true,
+      "verified_at": "2026-11-18",
+      "availability_note": "확인 당시 RSS 최신일이 2026-06-30. 공개 목록도 조회하되 오래된 기사는 제외."
+    },
+    {
+      "id": "archello",
+      "name": "Archello",
+      "homepage": "https://archello.com",
+      "enabled": true,
+      "categories": [
+        "global_architecture"
+      ],
+      "allowed_domains": [
+        "archello.com",
+        "www.archello.com"
+      ],
+      "feeds": [],
+      "listings": [
+        "https://archello.com/news"
+      ],
+      "article_url_pattern": "/(?:news|project)/[a-z0-9-]+",
+      "timezone": "UTC",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": true,
+      "verified_at": "2026-11-18",
+      "availability_note": "확인 당시 robots.txt HTTP 403. 접근이 허용될 때까지 본문 수집을 건너뜀."
+    },
+    {
+      "id": "glassonweb",
+      "name": "Glass on Web",
+      "homepage": "https://www.glassonweb.com",
+      "enabled": true,
+      "categories": [
+        "global_architecture"
+      ],
+      "allowed_domains": [
+        "www.glassonweb.com",
+        "glassonweb.com"
+      ],
+      "feeds": [],
+      "listings": [
+        "https://www.glassonweb.com/news"
+      ],
+      "article_url_pattern": "/news/[a-z0-9-]+",
+      "timezone": "UTC",
+      "max_candidates": 1000,
+      "max_article_fetches": 100,
+      "scan_article_body": true,
+      "verified_at": "2026-11-18",
+      "availability_note": "RSS는 2022년 기사만 반환해 제외. 공개 최신 뉴스 목록을 사용."
+    }
+  ]
 }
