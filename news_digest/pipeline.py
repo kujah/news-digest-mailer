@@ -11,6 +11,7 @@ from .models import Article, RunResult, SourceStatus
 from .network import WebClient, validate_url
 from .rules import Classifier, contains
 from .storage import History, title_key
+from .events import EventMatcher, group_articles, links
 
 LOG = logging.getLogger("news_digest")
 
@@ -49,6 +50,8 @@ def run(config: dict, client: WebClient, history: History, now: datetime | None 
     now = now or datetime.now(timezone.utc)
     cutoff = now - timedelta(hours=int(config.get("since_hours", 48)))
     classifier = Classifier(config)
+    matcher = EventMatcher(config)
+    history.configure(config)
     statuses = []
     classified: list[Article] = []
     excluded_titles = config.get("exclude_title_terms", [])
@@ -69,7 +72,7 @@ def run(config: dict, client: WebClient, history: History, now: datetime | None 
         candidates.sort(key=lambda article: article.published or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
         fetch_budget = int(source.get("max_article_fetches", 150))
         for article in candidates[:limit]:
-            if article.url in seen_urls or history.contains(article):
+            if article.url in seen_urls:
                 status.duplicate += 1
                 continue
             if any(contains(article.title, term) for term in excluded_titles):
@@ -118,13 +121,23 @@ def run(config: dict, client: WebClient, history: History, now: datetime | None 
         LOG.info("Publisher %s: discovered=%s matched=%s status=%s", source["id"], status.discovered, status.matched, status.status)
     if not any(status.status in {"ok", "partial", "no_entries", "stale"} for status in statuses):
         raise RuntimeError("All enabled publishers failed or were blocked; no successful collection")
-    articles = balance(classified, config)
+    grouped = group_articles(classified, matcher)
+    fresh, repeated = history.filter_new(grouped, now, lookback_days=int(config.get('history', {}).get('lookback_days', 14)))
+    articles = balance(fresh, config)
     lookup = {status.source_id: status for status in statuses}
+    for article in repeated:
+        for item in links(article):
+            if item.source_id in lookup:
+                lookup[item.source_id].repeated_event += 1
     for article in articles:
-        lookup[article.source_id].selected += 1
-    selected_urls = {article.url for article in articles}
+        for item in links(article):
+            if item.source_id in lookup:
+                lookup[item.source_id].selected += 1
+                if item.url != article.url:
+                    lookup[item.source_id].grouped += 1
+    selected_urls = {item.url for article in articles for item in links(article)}
     selected_titles = {title_key(article.title) for article in articles}
-    for article in classified:
+    for article in fresh:
         if article.url not in selected_urls and title_key(article.title) not in selected_titles:
             lookup[article.source_id].limited = True
     return RunResult(articles, statuses, now, int(config.get("since_hours", 48)), config["categories"])

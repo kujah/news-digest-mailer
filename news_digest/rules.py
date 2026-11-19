@@ -21,11 +21,33 @@ def contains(text: str, term: str) -> bool:
     else:
         pattern = re.escape(term).replace(r"\ ", r"[\s-]+").replace(r"\-", r"[\s-]*")
         pattern = r"(?<![a-z0-9])" + pattern + r"(?![a-z0-9])"
+        if term in {'us', 'u.s.'}:
+            pattern += r'(?!\$)'
     return bool(re.search(pattern, text))
 
 
 def hits(text: str, terms: list[str]) -> list[str]:
     return [term for term in terms if contains(text, term)]
+
+
+def topic_focus(article: Article, terms: list[str], entities: list[dict]) -> str:
+    """Require a substantive topic, then compare business signals in its sentences."""
+    title_match = bool(hits(article.title, terms))
+    lead = f"{article.summary[:300]}\n{article.content[:300]}"
+    sentences = [value.strip() for value in re.split(r"(?<=[.!?])\s+|\n+", article.content or article.summary) if value.strip()]
+    focused = [value for value in sentences if hits(value, terms)]
+    actor_title = any(hits(article.title, entity['aliases']) for entity in entities)
+    if not title_match and re.search(r'분양|청약|견본주택|직주근접', article.title):
+        return ''
+    if not title_match and not actor_title and re.search(r'동박|전지박|양극재|음극재', article.title):
+        return ''
+    if not (title_match or hits(lead, terms) or (actor_title and focused) or len(focused) >= 2):
+        return ""
+    # A title or lead establishes the story's focus; later isolated mentions do not.
+    pieces = [article.title] + focused
+    if hits(article.summary, terms):
+        pieces.extend(value.strip() for value in re.split(r'(?<=[.!?])\s+|\n+', article.summary) if hits(value, terms))
+    return "\n".join(dict.fromkeys(pieces))
 
 
 def capacities(text: str) -> list[tuple[float, str, str]]:
@@ -80,6 +102,11 @@ class Classifier:
             topic_hits = all_hits.get(topic, [])
             families = {topic, "tracker"} if topic == "solar" else {topic}
             family_entities = [item for item in entity_matches if item["family"] in families]
+            focus = text
+            if topic in {'solar', 'bess'}:
+                focus = topic_focus(article, self.groups.get(topic, []), family_entities)
+                if not focus and not (family == 'solar_specialist' and any(hits(article.title, item['aliases']) for item in family_entities if item['family'] == 'tracker')):
+                    continue
             if family == "construction":
                 selected = all_hits.get("construction", [])
                 if selected:
@@ -88,13 +115,13 @@ class Classifier:
             elif family == "solar_specialist":
                 tracker_entities = [item for item in entity_matches if item["family"] == "tracker"]
                 lead = f"{article.title}\n{article.summary}\n{article.content[:600]}"
-                macro = hits(lead, self.groups.get("solar_sectors", [])) + hits(lead, self.groups.get("market_policy", []))
-                if tracker_entities:
+                macro = hits(focus, self.groups.get("solar_sectors", [])) + hits(focus, self.groups.get("market_policy", []))
+                if tracker_entities and any(hits(f'{article.title}\n{lead}', item['aliases']) for item in tracker_entities):
                     selected = [item["name"] for item in tracker_entities]
                     reason = "지정 구조물·트래커 업체 동향"
                     score = 90
-                elif topic_hits and macro and not (re.search(r"\b(?:unveils?|introduces?|launches?|debuts?|certified)\b", article.title, re.I)
-                                                   and not re.search(r"\b(?:factory|facility|plant|manufacturing|auction|policy)\b", article.title, re.I)):
+                elif topic_hits and macro and not (re.search(r"\b(?:unveils?|introduces?|launches?|debuts?|certified|develops?)\b", article.title, re.I)
+                                                   and not re.search(r"\b(?:factory|facility|plant|manufacturing|auction|policy|tariff|subsidy|mandate|bidding|framework|programme|program|regulation|tax)\b", article.title, re.I)):
                     selected = topic_hits + macro
                     reason = "태양광 국가·지역 전망 / 정책 / 수상·영농형 등 산업 동향"
                     score = 75
@@ -105,9 +132,9 @@ class Classifier:
                     continue
                 if not topic_hits and not family_entities:
                     continue
-                market = all_hits.get("market_policy", [])
-                company = all_hits.get("company_events", [])
-                project = all_hits.get("project_events", [])
+                market = hits(focus, self.groups.get("market_policy", []))
+                company = hits(focus, self.groups.get("company_events", []))
+                project = hits(focus, self.groups.get("project_events", []))
                 if topic == "steel":
                     trade = all_hits.get("trade", [])
                     if trade:
@@ -129,7 +156,7 @@ class Classifier:
                         score = 80
                     elif project:
                         if topic == "solar":
-                            large = any(unit == "MW" and value >= self.thresholds.get("solar_min_mw", 50) for value, unit, _ in capacity)
+                            large = any(unit == "MW" and value >= self.thresholds.get("solar_min_mw", 50) for value, unit, _ in capacities(focus))
                         else:
                             has_energy = any(unit == "MWh" for _, unit, _ in capacity)
                             large = any(unit == ("MWh" if has_energy else "MW") and
@@ -161,7 +188,8 @@ class Classifier:
         sentences = [clean_text(value) for value in re.split(r"(?<=[.!?])\s+|\n+", text)]
         sentences = [sentence for sentence in sentences if len(sentence) >= 25 and
                      not re.search(r"구독|무단\s*전재|재배포\s*금지|subscribe|all rights reserved", sentence, re.I)]
-        ranked = sorted(enumerate(sentences), key=lambda item: (-sum(contains(item[1], word) for word in keywords), item[0]))
+        relevant = [(index, sentence) for index, sentence in enumerate(sentences) if any(contains(sentence, word) for word in keywords)]
+        ranked = sorted(relevant or list(enumerate(sentences)), key=lambda item: (-sum(contains(item[1], word) for word in keywords), item[0]))
         chosen = sorted(ranked[:3])
         value = " ".join(sentence for _, sentence in chosen) or clean_text(text)
         if len(value) <= self.excerpt_chars:

@@ -4,6 +4,8 @@ from datetime import timedelta, timezone
 from html import escape
 
 from .models import Article, RunResult
+from .events import links
+from .sent_mail import history_comment
 
 KST = timezone(timedelta(hours=9))
 STATUS = {"ok": "수집 완료", "partial": "일부 접근 제한", "unavailable": "접근 제한",
@@ -27,7 +29,8 @@ def mail_sections(result: RunResult):
 
 def article_details(article: Article) -> str:
     date = article.published.astimezone(KST).strftime("%m/%d %H:%M") if article.published else "게시일 미확인"
-    parts = [article.source_name, date]
+    sources = ' · '.join(dict.fromkeys(item.source_name for item in links(article) if item.source_name))
+    parts = [sources or article.source_name, date]
     if article.markets:
         parts.append(" · ".join(article.markets[:5]))
     if article.capacities:
@@ -46,12 +49,18 @@ def render_text(result: RunResult) -> str:
             lines.extend([f"{index}. {article.title}", article_details(article),
                           f"선별 근거: {article.matches[0].reason}",
                           f"{article.content_origin}: {article.summary or '공개 발췌 없음'}", article.url, ""])
+            if article.update_note:
+                lines.extend([article.update_note, ''])
+            if len(links(article)) > 1:
+                lines.extend(['같은 사건의 보도 매체:'] + [f'{item.source_name}: {item.url}' for item in links(article)] + [''])
     lines.extend(["[매체 수집 상태]", ""])
     for source in result.sources:
         note = f" · 게시일 미확인 {source.undated}건 제외" if source.undated else ""
         limited = " · 조회 상한 적용" if source.limited else ""
         latest = f" · 최근 게시 {source.latest_published:%Y-%m-%d}" if source.status == "stale" and source.latest_published else ""
-        lines.append(f"{source.name}: {STATUS.get(source.status, source.status)} · 반영 {source.selected}건{note}{limited}{latest}")
+        repeated = f' · 이미 보낸 사건 {source.repeated_event}건 제외' if source.repeated_event else ''
+        grouped = f' · 같은 사건 {source.grouped}건 통합' if source.grouped else ''
+        lines.append(f"{source.name}: {STATUS.get(source.status, source.status)} · 반영 {source.selected}건{note}{limited}{latest}{repeated}{grouped}")
     lines.extend(["", "공개 RSS·기사 목록의 최근 항목을 선별한 결과입니다. 전체 기사 검색 결과는 아닙니다.",
                   "선별 근거는 설정된 키워드·규모 기준입니다. 발췌는 기사 문장을 골라 표시하며 AI 요약이나 번역이 아닙니다.",
                   "수집·접근 제한 또는 해당 기간의 기사가 없으면 섹션이 비어 있을 수 있습니다."])
@@ -79,11 +88,20 @@ def render_html(result: RunResult) -> str:
                 f"<p style=\"font-size:12px;color:#19756d;margin:10px 0\">{escape(article.matches[0].reason)}</p>",
                 f"<p style=\"font-size:14px;line-height:1.85;margin:12px 0\">{escape(article.summary or '공개 발췌 없음')}</p>",
                 f"<div style=\"font-size:11px;color:#728091\">{escape(article.content_origin)}{(' · 관련: ' + escape(related)) if related else ''}</div>",
-                f"<a href=\"{escape(article.url, quote=True)}\" style=\"display:inline-block;font-size:13px;color:#17608a;margin-top:12px\">원문 읽기 →</a></div>"])
+                f"<a href=\"{escape(article.url, quote=True)}\" style=\"display:inline-block;font-size:13px;color:#17608a;margin-top:12px\">원문 읽기 →</a>"])
+            if article.update_note:
+                pieces.append(f'<p style="font-size:12px;color:#9a3412;margin:8px 0">{escape(article.update_note)}</p>')
+            coverage = links(article)
+            if len(coverage) > 1:
+                source_links = ' · '.join(f'<a href="{escape(item.url, quote=True)}" title="{escape(item.title, quote=True)}" style="color:#17608a">{escape(item.source_name or "원문")}</a>' for item in coverage)
+                pieces.append(f'<div style="font-size:12px;margin:8px 0 18px">같은 사건의 보도 매체: {source_links}</div>')
+            pieces.append('</div>')
         pieces.append("</td></tr></table>")
     pieces.append("<h2 style=\"font-size:18px;margin-top:32px\">매체 수집 상태</h2><table style=\"width:100%;border-collapse:collapse;font-size:12px\"><thead><tr><th align=\"left\" style=\"padding:8px;border-bottom:1px solid #cbd6df\">매체</th><th align=\"left\">상태</th><th align=\"right\">반영</th></tr></thead><tbody>")
     for source in result.sources:
         suffix = " / 조회 상한 적용" if source.limited else ""
+        suffix += f' / 재보도 {source.repeated_event}건 제외' if source.repeated_event else ''
+        suffix += f' / {source.grouped}건 통합' if source.grouped else ''
         pieces.append(f"<tr><td style=\"padding:8px;border-bottom:1px solid #dce3ea\">{escape(source.name)}</td><td>{escape(STATUS.get(source.status, source.status) + suffix)}</td><td align=\"right\">{source.selected}</td></tr>")
     pieces.append("</tbody></table><p style=\"font-size:11px;line-height:1.8;color:#738195;margin-top:20px\">공개 RSS·기사 목록의 최근 항목을 선별한 결과이며 전체 기사 검색 결과는 아닙니다. 선별 근거는 키워드·규모 기준이고, 발췌는 기사 문장입니다. AI 요약·번역을 수행하지 않습니다. 접근 제한 매체의 전체 기사나 유료 본문은 포함하지 않습니다.</p></div></body></html>")
-    return "".join(pieces)
+    return "".join(pieces).replace('</body>', history_comment(result) + '</body>')

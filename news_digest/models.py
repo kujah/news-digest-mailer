@@ -14,6 +14,18 @@ class Match:
 
 
 @dataclass(frozen=True)
+class Coverage:
+    title: str
+    url: str
+    source_id: str
+    source_name: str
+    published: datetime | None = None
+    source_url: str = ""
+    fetched_at: datetime | None = None
+    http_status: int | None = None
+
+
+@dataclass(frozen=True)
 class Article:
     title: str
     url: str
@@ -30,6 +42,10 @@ class Article:
     entities: tuple[str, ...] = ()
     markets: tuple[str, ...] = ()
     capacities: tuple[str, ...] = ()
+    coverage: tuple[Coverage, ...] = ()
+    event_id: str = ""
+    update_note: str = ""
+    event_profile: str = ""
 
 
 @dataclass
@@ -45,6 +61,8 @@ class SourceStatus:
     old: int = 0
     undated: int = 0
     duplicate: int = 0
+    repeated_event: int = 0
+    grouped: int = 0
     limited: bool = False
     latest_published: datetime | None = None
     checks: list[dict] = field(default_factory=list)
