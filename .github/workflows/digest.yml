@@ -33,4 +33,7 @@ jobs:
           SMTP_HOST: ${{ vars.SMTP_HOST }}
           SMTP_PORT: ${{ vars.SMTP_PORT }}
           SMTP_SECURITY: ${{ vars.SMTP_SECURITY }}
+          HISTORY_BACKEND: ${{ vars.HISTORY_BACKEND }}
+          HISTORY_IMAP_USER: ${{ secrets.HISTORY_IMAP_USER }}
+          HISTORY_IMAP_PASSWORD: ${{ secrets.HISTORY_IMAP_PASSWORD }}
         run: python digest.py --config sources.json
