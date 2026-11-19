@@ -24,6 +24,7 @@ from news_digest.network import RedactionFilter, WebClient
 from news_digest.pipeline import run, validate_config
 from news_digest.rendering import render_html, render_text
 from news_digest.storage import History, inside, save_report
+from news_digest.sent_mail import fetch_gmail_history
 
 BASE = Path(__file__).resolve().parent
 LOG = logging.getLogger("news_digest")
@@ -111,6 +112,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--sources", help="Comma-separated publisher IDs to collect")
     parser.add_argument("--since-hours", type=int)
     parser.add_argument("--max-items", type=int)
+    parser.add_argument('--history-backend', choices=('local', 'gmail'), help='Previews default to local; Gmail loads previously sent briefings read-only')
     parser.add_argument("--state-dir", type=Path, default=BASE / "data", help="Local state directory inside this project")
     args = parser.parse_args(argv)
     try:
@@ -150,7 +152,16 @@ def main(argv: list[str] | None = None) -> int:
         with RunLock(state / "digest.lock"):
             history = History(state / "history.sqlite3")
             try:
-                if os.environ.get("GITHUB_ACTIONS") == "true":
+                backend = args.history_backend or os.environ.get('HISTORY_BACKEND') or ('local' if args.preview or args.dry_run else config.get('history', {}).get('backend', 'local'))
+                if backend not in {'local', 'gmail'}:
+                    raise ValueError('HISTORY_BACKEND must be local or gmail')
+                history.configure(config)
+                if backend == 'gmail':
+                    records = fetch_gmail_history(config, now)
+                    for profiles, sent_at in records:
+                        history.import_profiles(profiles, sent_at)
+                    LOG.info('Gmail Sent history loaded read-only; prior briefings=%s', len(records))
+                elif os.environ.get("GITHUB_ACTIONS") == "true":
                     LOG.info("History is local. GitHub-hosted runners start with fresh storage; cross-run deduplication requires persistent tenant storage or a persistent runner workspace.")
                 result = run(config, client, history, now)
                 text = render_text(result)

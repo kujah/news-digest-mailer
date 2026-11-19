@@ -934,6 +934,21 @@
         "아프리카",
         "Africa"
       ]
+    },
+    {
+      "name": "방글라데시",
+      "aliases": [
+        "방글라데시",
+        "Bangladesh"
+      ]
+    },
+    {
+      "name": "오스트리아",
+      "aliases": [
+        "오스트리아",
+        "Austria",
+        "Austrian"
+      ]
     }
   ],
   "sources": [
@@ -1474,5 +1489,10 @@
       "verified_at": "2026-11-18",
       "availability_note": "RSS는 2022년 기사만 반환해 제외. 공개 최신 뉴스 목록을 사용."
     }
-  ]
+  ],
+  "history": {
+    "backend": "gmail",
+    "lookback_days": 14,
+    "max_mailbox_messages": 2000
+  }
 }

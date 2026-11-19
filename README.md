@@ -35,7 +35,7 @@
 - `include_undated`: 기본 `false`. 게시일 미확인 기사로 과거 글이 섞이지 않도록 제외하며, 조회 시각을 게시일로 바꿔 쓰지 않습니다.
 - `sources[].max_candidates`·`sources[].max_article_fetches`: 매체별 후보 1,000건, 본문 조회는 국내 경제 매체 150건·전문 매체 100건. 이전의 후보·본문 상한을 늘렸으며 상한 적용 시 메일에 표시합니다. 본문 상한을 넘으면 날짜가 있는 RSS 발췌로만 선별합니다. 공개 목록에 없는 기사와 접근 제한 본문까지 모두 수집한다고 보장할 수는 없습니다.
 
-선별은 제목·RSS 요약·접근 가능한 본문에 대한 키워드와 규모 규칙입니다. 관련 문장을 골라 최대 500자로 발췌하며, 기사 의미를 판단하는 AI 요약이나 번역은 이번 버전에 포함하지 않습니다. 영어 기사는 영문 제목·발췌로 표시됩니다. 긴 기사에서 정책·규모·업체 이름의 연결 관계가 완벽히 판별되지 않을 수 있으므로 선별 근거와 원문 링크를 제공합니다.
+선별은 제목·RSS 요약·접근 가능한 본문에 대한 키워드와 규모 규칙입니다. 태양광·BESS는 제목·도입부 또는 여러 핵심 문장에서 주제가 확인되어야 하며, 시장·정책·프로젝트 신호도 해당 주제를 다루는 문장에서 찾습니다. 아파트 분양의 BIPV 설비 언급, 인근 ESS 공장, 동박 업황 기사의 태양광 정책 언급만으로 선정하지 않습니다. 관련 문장을 골라 최대 500자로 발췌하며 AI 요약이나 번역은 포함하지 않습니다. 영어 기사는 영문 제목·발췌로 표시됩니다.
 
 ## 실행과 미리보기
 
@@ -44,6 +44,8 @@
 ```powershell
 python digest.py --check-sources
 python digest.py --preview
+python digest.py --preview --history-backend local
+python digest.py --preview --history-backend gmail
 python digest.py --preview --sources pv_magazine,windoor,glassonweb --since-hours 168
 python digest.py --dry-run --max-items 10
 python -m unittest discover -s tests -v
@@ -62,12 +64,23 @@ python -m unittest discover -s tests -v
 | `SMTP_HOST` | 선택 사항. 기본 `smtp.gmail.com` |
 | `SMTP_PORT` | 선택 사항. SSL 기본 465, STARTTLS 기본 587 |
 | `SMTP_SECURITY` | 선택 사항. `ssl` 또는 `starttls` |
+| `HISTORY_BACKEND` | 선택 사항. 기본 `gmail`. `local`은 로컬 SQLite 이력만 사용 |
+| `HISTORY_IMAP_USER` | 선택 사항. Gmail 이력 조회 계정. 미설정 시 `SMTP_USER` |
+| `HISTORY_IMAP_PASSWORD` | 선택 사항. Gmail 이력 조회 앱 비밀번호. 미설정 시 `SMTP_PASSWORD` |
 
 Secrets의 값에는 `SMTP_USER=`·`MAIL_TO=` 같은 이름표를 넣지 않습니다. 주소 중간의 줄바꿈이나 잘못된 주소는 서버에 연결하기 전에 거부합니다. 앱 비밀번호·토큰은 코드·문서·채팅·로그에 넣지 않습니다.
 
 ## 이력과 수집 보고서
 
-발송 이력은 `data/history.sqlite3`에 남깁니다. 같은 URL의 추적 파라미터 변형과 같은 제목의 재게시를 걸러내고, SMTP에서 모든 수신자를 수락한 후에만 완료로 기록합니다. 서로 다른 제목으로 작성된 같은 사건까지 합치는 기능은 아닙니다. 전송 실패나 미리보기는 발송 완료로 기록하지 않습니다. SMTP 수락은 수신함 최종 도착을 보장하지 않습니다.
+같은 사건의 보도는 한 카드로 묶습니다. 공개 본문이 있고 내용이 충실한 기사를 대표로 선택하며, 다른 매체의 원문 링크도 카드 안에 표시합니다. 제목·문장의 유사도와 업체·프로젝트·정책·국가·수치 등 사건 근거를 비교합니다. 같은 회사나 같은 국가의 뉴스라는 이유만으로 합치지 않으며, 서로 다른 프로젝트와 실적·전망의 다른 보고 기간은 분리합니다.
+
+기본 `gmail` 이력 모드는 Gmail 보낸편지함에서 최근 **14일**의 브리핑을 읽습니다. `imap.gmail.com:993`에 TLS로 연결하고 `EXAMINE`과 `BODY.PEEK`를 사용하므로 읽음 상태·내용·폴더를 바꾸지 않습니다. 다른 보낸 메일은 제목·날짜 헤더만 확인하고 본문은 가져오지 않습니다. 검색 결과가 기본 2,000통을 넘으면 일부만 확인했다고 간주하지 않고 오류로 종료합니다. `history.lookback_days`·`max_mailbox_messages`로 조정할 수 있습니다.
+
+기존 메일은 제목·발췌문을 파싱하고, 새 메일은 화면에 보이지 않는 HTML 주석에 사건 비교 정보를 포함합니다. 별도 첨부파일을 만들지 않습니다. 새 실행마다 보낸편지함에서 이 정보를 복원하므로 GitHub-hosted 환경에서도 실행 사이 이력이 유지됩니다. 이메일 원본이나 인증정보를 저장소·GitHub cache·artifact에 업로드하지 않습니다.
+
+전날 보낸 사건을 다른 매체가 새 제목으로 보도해도 내용이 같으면 제외합니다. 실제 착공·준공·계약·승인 등 단계가 바뀌거나 수치 변경 근거가 확인되면 다시 표시하고 `새 내용`을 붙입니다. 단순 발행일 변경과 배경 설명의 수치 추가는 새 소식으로 보지 않습니다. 사건 비교는 규칙 기반이며, 판단 근거가 약하면 서로 다른 기사로 유지합니다.
+
+Gmail 조회 실패 또는 기존 브리핑 파싱 실패는 발송 전에 오류로 종료합니다. 중복 검사를 건너뛴 메일을 보내지 않습니다. SMTP에서 모든 수신자를 수락한 후에만 현재 사건을 `data/history.sqlite3`에 기록합니다. 전송 실패나 미리보기는 발송 완료로 기록하지 않습니다. SMTP 수락은 수신함 최종 도착을 보장하지 않습니다.
 
 `data/runs/` 보고서에는 `source_url`·UTC `fetched_at`·HTTP 상태·발췌 출처·게시일·선별 이유와 매체별 결과가 있습니다. 본문 전체나 인증 정보는 보고서에 저장하지 않습니다. 로그에는 인증 헤더·토큰 쿼리·연결 문자열 비밀번호를 가리는 필터를 적용합니다. `data/`, `.env`, `*.local.*`는 Git에 포함하지 않습니다.
 
@@ -79,7 +92,9 @@ Secrets의 값에는 `SMTP_USER=`·`MAIL_TO=` 같은 이름표를 넣지 않습�
 
 Repository **Secrets**에는 `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_TO`를 등록합니다. 선택 사항인 `MAIL_FROM`도 Repository Secret입니다. Repository **Variables**에는 이름을 `DIGEST_ENABLED`, **값을 소문자 `true`만** 입력합니다. `DIGEST_ENABLED=true` 전체 문자열을 값에 넣으면 발송 단계가 건너뛰어집니다. 선택 사항인 `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURITY`는 Repository Variables입니다.
 
-GitHub-hosted runner의 디렉터리는 실행마다 새로 생기므로 이 로컬 SQLite 이력만으로 **서로 다른 hosted 실행 사이의 중복을 막을 수 없습니다**. 테넌트 안의 영구 저장소를 연결하거나 이 디렉터리를 유지하는 승인된 실행 환경이 필요합니다. 수집 자료와 이력을 외부 캐시·artifact로 업로드하는 기능은 넣지 않았습니다. 기본 26시간 범위에는 이력이 없는 일일 실행 사이에서 최대 2시간의 겹침이 있습니다.
+현재 Gmail 발송 계정의 `SMTP_USER`·`SMTP_PASSWORD`가 등록되어 있다면 이력 조회에도 기본적으로 같은 Secret을 사용합니다. 별도 조회 계정을 쓸 때만 `HISTORY_IMAP_USER`·`HISTORY_IMAP_PASSWORD`를 Repository Secrets에 추가합니다. `HISTORY_BACKEND`를 Repository Variable에 설정한다면 값은 `gmail`입니다. Gmail IMAP 로그인은 실제 워크플로 첫 실행에서 확인해야 하며, 계정 정책이 IMAP을 허용해야 합니다.
+
+`local` 모드는 이 PC처럼 디렉터리가 유지되는 환경용입니다. GitHub-hosted runner에서 `local`로 설정하면 실행마다 이력이 초기화돼 전날 사건 비교가 유지되지 않습니다. 기본 `gmail` 모드는 보낸편지함으로 이 문제를 해결합니다. 로컬 미리보기는 별도 지정 없이 `local` 모드를 사용해 Gmail에 연결하지 않습니다.
 
 ## 새 매체 연결
 
